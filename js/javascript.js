@@ -10,6 +10,24 @@ const games = [
 window.games = games;
 let cart = [];
 
+function saveCart() {
+	localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function loadCart() {
+	const stored = localStorage.getItem('cart');
+	if (stored) {
+		try {
+			const parsed = JSON.parse(stored);
+			if (Array.isArray(parsed)) {
+				cart = parsed;
+			}
+		} catch (error) {
+			console.warn('No se pudo cargar el carrito desde localStorage:', error);
+		}
+	}
+}
+
 // Función para generar el HTML de una tarjeta de juego
 function _gameColHtml(game) {
 	return `
@@ -47,17 +65,21 @@ function renderGamesGrid(containerId, gamesArray, perRow = 3, limit = null) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+	loadCart();
 	// Index: renderiza solo si los 3 primeros existen en la fila 
 	renderGamesGrid('games-row', window.games, 3, 3);
 	// Buscador: reenderiza todos los juegos dentro de un grid de filas con 3 columnas cada una (si el contenedor existe)
 	renderGamesGrid('buscador-grid', window.games, 3, null);
+	// Carrito: renderiza el contenido persisted si la página lo incluye
+	renderCart();
 });
 
 // Función para agregar un juego al carrito
 function addToCart(gameId) {
 	const game = window.games.find(g => g.id === gameId);
-	if (game) { 
+	if (game) {
 		cart.push(game);
+		saveCart();
 		console.log(`Agregado al carrito: ${game.nombre}`);
 	}
 }
@@ -70,3 +92,25 @@ document.addEventListener('click', (event) => {
 		addToCart(gameId);
 	}
 });
+
+// Función para renderizar el contenido del carrito
+function renderCart() {
+	const cartContainer = document.getElementById('cart-items');
+	if (!cartContainer) return;
+	if (cart.length === 0) {
+		cartContainer.innerHTML = '<p>Tu carrito está vacío.</p>';
+		return;
+	}
+	const cartItemsHtml = cart.map(game => `
+		<div class="col-sm-4 mb-3 mb-sm-0">
+			<div class="card" style="width: 18rem;">
+				<img src="${game.imagen}" class="card-img-top" alt="${game.nombre}">
+				<div class="card-body">
+					<h5 class="card-title">${game.nombre}</h5>
+					<p class="card-text">${game.precio}</p>
+				</div>
+			</div>
+		</div>
+	`).join('');
+	cartContainer.innerHTML = `<div class="row">${cartItemsHtml}</div>`;
+}
