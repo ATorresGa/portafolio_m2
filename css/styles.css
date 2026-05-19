@@ -17,7 +17,7 @@ section,
     display: flex;
 }
 
-.card {
+.game-list .card {
     margin: 0 auto 1rem;
     max-width: 100%;
     width: 18rem;
@@ -25,14 +25,14 @@ section,
     flex-direction: column;
 }
 
-.card-body {
+.game-list .card-body {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.card-img-top {
+.game-list .card-img-top {
     display: block;
     width: 100%;
     max-height: 220px;
