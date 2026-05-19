@@ -14,4 +14,7 @@
 
 - Se agrego la logica a carrito
 - Se cambio la carga de las imagenes y elementos a cargar con un arreglo predefinido
+
+## fixes
+
 - Se agrego la logica para la persistencia con localStorage para el carrito
