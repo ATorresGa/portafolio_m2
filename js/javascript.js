@@ -10,10 +10,12 @@ const games = [
 window.games = games;
 let cart = [];
 
+// Función para guardar el carrito en localStorage
 function saveCart() {
 	localStorage.setItem('cart', JSON.stringify(cart));
 }
 
+// Función para cargar el carrito desde localStorage al iniciar la página
 function loadCart() {
 	const stored = localStorage.getItem('cart');
 	if (stored) {
@@ -28,6 +30,32 @@ function loadCart() {
 	}
 }
 
+function getCartTotal() {
+	return cart.reduce((total, game) => {
+		const price = parseFloat(game.precio.replace('$', ''));
+		return total + (isNaN(price) ? 0 : price);
+	}, 0).toFixed(2);
+}
+
+function getCartCount() {
+	return cart.length;
+}
+
+function renderCartCount() {
+	const countElement = document.getElementById('cart-count');
+	if (countElement) {
+		countElement.textContent = getCartCount();
+	}
+}
+
+function clearCart() {
+	cart = [];
+	saveCart();
+	renderCart();
+	renderCartTotal();
+	renderCartCount();
+}
+
 // Función para generar el HTML de una tarjeta de juego
 function _gameColHtml(game) {
 	return `
@@ -38,7 +66,7 @@ function _gameColHtml(game) {
 					<input type="hidden" class="game-id" value="${game.id}">
 					<h5 class="card-title">${game.nombre}</h5>
 					<p class="card-text">${game.precio}</p>
-					<a href="#" class="btn btn-primary">Agregar al carrito</a>
+					<a href="#" class="btn btn-primary add-to-cart">Agregar al carrito</a>
 				</div>
 			</div>
 		</div>`;
@@ -72,6 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	renderGamesGrid('buscador-grid', window.games, 3, null);
 	// Carrito: renderiza el contenido persisted si la página lo incluye
 	renderCart();
+	// Actualiza el total y el contador del carrito al cargar la página
+	renderCartTotal();
+	// Actualiza el contador del carrito en la barra de navegación
+	renderCartCount();
 });
 
 // Función para agregar un juego al carrito
@@ -80,16 +112,25 @@ function addToCart(gameId) {
 	if (game) {
 		cart.push(game);
 		saveCart();
+		renderCartTotal();
+		renderCartCount();
 		console.log(`Agregado al carrito: ${game.nombre}`);
 	}
 }
 
-// Delegación de eventos para manejar clicks en los botones "Agregar al carrito"
+// Delegación de eventos para manejar clicks en los botones "Agregar al carrito" y limpiar el carrito
 document.addEventListener('click', (event) => {
-	if (event.target.matches('.btn-primary')) {
+	if (event.target.matches('.add-to-cart')) {
 		event.preventDefault();
 		const gameId = parseInt(event.target.closest('.card-body').querySelector('.game-id').value);
 		addToCart(gameId);
+		return;
+	}
+
+	if (event.target.matches('#clear-cart-btn')) {
+		event.preventDefault();
+		clearCart();
+		return;
 	}
 });
 
@@ -113,4 +154,12 @@ function renderCart() {
 		</div>
 	`).join('');
 	cartContainer.innerHTML = `<div class="row">${cartItemsHtml}</div>`;
+}
+
+// funcion para reenderizar el total del carrito
+function renderCartTotal() {
+	const totalElement = document.getElementById('cart-total');
+	if (totalElement) {
+		totalElement.textContent = getCartTotal();
+	}
 }

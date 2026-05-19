@@ -14,6 +14,10 @@
 
 - Se agrego la logica a carrito
 - Se cambio la carga de las imagenes y elementos a cargar con un arreglo predefinido
+- Se añadio el contador al carrito
+- Se quito la pagina de contacto
+- Se agrego la logica para limpiar el carrito
+- Se añadio la informacion en el footer
 
 ## fixes
 
