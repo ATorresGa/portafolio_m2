@@ -7,5 +7,7 @@
 - Se añadieron las imagenes para los productos
 - Se agregaron las demas paginas necesarias.
 - Se añadio funcionabilidad al navbar
+- Se añadio el readme.md
+- Se añadio el javascript
 
 ## updates
